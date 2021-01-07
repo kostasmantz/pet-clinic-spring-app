@@ -3,10 +3,7 @@ package com.mantzavelas.petclinicspringapp.bootstrap;
 import com.mantzavelas.petclinicspringapp.model.Owner;
 import com.mantzavelas.petclinicspringapp.model.Vet;
 import com.mantzavelas.petclinicspringapp.services.OwnerService;
-import com.mantzavelas.petclinicspringapp.services.PetService;
 import com.mantzavelas.petclinicspringapp.services.VetService;
-import com.mantzavelas.petclinicspringapp.services.map.OwnerServiceMap;
-import com.mantzavelas.petclinicspringapp.services.map.VetServiceMap;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +13,9 @@ public class DataLoader implements CommandLineRunner {
     private final OwnerService ownerService;
     private final VetService vetService;
 
-    public DataLoader() {
-        ownerService = new OwnerServiceMap();
-        vetService = new VetServiceMap();
+    public DataLoader(OwnerService ownerService, VetService vetService) {
+        this.ownerService = ownerService;
+        this.vetService = vetService;
     }
 
     @Override
