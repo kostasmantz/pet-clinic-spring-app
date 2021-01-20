@@ -1,6 +1,7 @@
 package com.mantzavelas.petclinicspringapp.bootstrap;
 
 import com.mantzavelas.petclinicspringapp.model.Owner;
+import com.mantzavelas.petclinicspringapp.model.Pet;
 import com.mantzavelas.petclinicspringapp.model.PetType;
 import com.mantzavelas.petclinicspringapp.model.Vet;
 import com.mantzavelas.petclinicspringapp.services.OwnerService;
@@ -8,6 +9,8 @@ import com.mantzavelas.petclinicspringapp.services.PetTypeService;
 import com.mantzavelas.petclinicspringapp.services.VetService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -31,15 +34,34 @@ public class DataLoader implements CommandLineRunner {
         PetType cat = new PetType();
         cat.setName("Cat");
 
-        petTypeService.save(dog);
-        petTypeService.save(cat);
+        PetType savedDogPetType = petTypeService.save(dog);
+        PetType savedCatPetType = petTypeService.save(cat);
         System.out.println("Loaded Pet types...");
 
-        Owner owner = new Owner("Dave", "Johnson");
-        Owner owner2 = new Owner("John", "Doe");
+        Owner dave = new Owner("Dave", "Johnson");
+        dave.setAddress("Lampraki 123");
+        dave.setCity("Thessaloniki");
+        dave.setTelephone("1234567890");
 
-        ownerService.save(owner);
-        ownerService.save(owner2);
+        Pet davesDog = new Pet();
+        davesDog.setPetType(savedDogPetType);
+        davesDog.setBirthDate(LocalDate.now());
+        davesDog.setOwner(dave);
+        dave.getPets().add(davesDog);
+
+        Owner john = new Owner("John", "Doe");
+        john.setAddress("Patision 23");
+        john.setCity("Athens");
+        john.setTelephone("3213728937");
+
+        Pet johnsCat = new Pet();
+        johnsCat.setPetType(cat);
+        johnsCat.setBirthDate(LocalDate.now());
+        johnsCat.setOwner(john);
+        john.getPets().add(johnsCat);
+
+        ownerService.save(dave);
+        ownerService.save(john);
 
         System.out.println("Loaded Owners...");
 
