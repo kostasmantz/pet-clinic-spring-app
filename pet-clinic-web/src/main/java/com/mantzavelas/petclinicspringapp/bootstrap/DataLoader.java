@@ -1,10 +1,7 @@
 package com.mantzavelas.petclinicspringapp.bootstrap;
 
 import com.mantzavelas.petclinicspringapp.model.*;
-import com.mantzavelas.petclinicspringapp.services.OwnerService;
-import com.mantzavelas.petclinicspringapp.services.PetTypeService;
-import com.mantzavelas.petclinicspringapp.services.SpecialityService;
-import com.mantzavelas.petclinicspringapp.services.VetService;
+import com.mantzavelas.petclinicspringapp.services.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +14,14 @@ public class DataLoader implements CommandLineRunner {
     private final VetService vetService;
     private final PetTypeService petTypeService;
     private final SpecialityService specialityService;
+    private final VisitService visitService;
 
-    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService, SpecialityService specialityService) {
+    public DataLoader(OwnerService ownerService, VetService vetService, PetTypeService petTypeService, SpecialityService specialityService, VisitService visitService) {
         this.ownerService = ownerService;
         this.vetService = vetService;
         this.petTypeService = petTypeService;
         this.specialityService = specialityService;
+        this.visitService = visitService;
     }
 
     @Override
@@ -62,13 +61,20 @@ public class DataLoader implements CommandLineRunner {
         john.setTelephone("3213728937");
 
         Pet johnsCat = new Pet();
-        johnsCat.setPetType(cat);
+        johnsCat.setPetType(savedCatPetType);
         johnsCat.setBirthDate(LocalDate.now());
         johnsCat.setOwner(john);
         john.getPets().add(johnsCat);
 
         ownerService.save(dave);
         ownerService.save(john);
+
+        Visit johnsCatVisit = new Visit();
+        johnsCatVisit.setPet(johnsCat);
+        johnsCatVisit.setDate(LocalDate.now());
+        johnsCatVisit.setDescription("All good, minor worms in stomach");
+
+        visitService.save(johnsCatVisit);
 
         System.out.println("Loaded Owners...");
 
