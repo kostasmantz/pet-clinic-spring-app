@@ -2,8 +2,6 @@ package com.mantzavelas.petclinicspringapp.services.springdatajpa;
 
 import com.mantzavelas.petclinicspringapp.model.Owner;
 import com.mantzavelas.petclinicspringapp.repositories.OwnerRepository;
-import com.mantzavelas.petclinicspringapp.repositories.PetRepository;
-import com.mantzavelas.petclinicspringapp.repositories.PetTypeRepository;
 import com.mantzavelas.petclinicspringapp.services.OwnerService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
