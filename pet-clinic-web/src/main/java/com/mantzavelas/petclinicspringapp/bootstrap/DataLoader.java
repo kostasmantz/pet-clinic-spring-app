@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -44,26 +45,38 @@ public class DataLoader implements CommandLineRunner {
         PetType savedCatPetType = petTypeService.save(cat);
         System.out.println("Loaded Pet types...");
 
-        Owner dave = new Owner("Dave", "Johnson");
-        dave.setAddress("Lampraki 123");
-        dave.setCity("Thessaloniki");
-        dave.setTelephone("1234567890");
+        Owner dave = Owner.builder()
+                .firstName("Dave")
+                .lastName("Johnson")
+                .address("Lampraki 123")
+                .city("Thessaloniki")
+                .telephone("1234567890")
+                .pets(new HashSet<>())
+                .build();
 
         Pet davesDog = new Pet();
+        davesDog.setName("Stark");
         davesDog.setPetType(savedDogPetType);
         davesDog.setBirthDate(LocalDate.now());
         davesDog.setOwner(dave);
+
         dave.getPets().add(davesDog);
 
-        Owner john = new Owner("John", "Doe");
-        john.setAddress("Patision 23");
-        john.setCity("Athens");
-        john.setTelephone("3213728937");
+        Owner john = Owner.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .address("Patision 23")
+                .city("Athens")
+                .telephone("3213728937")
+                .pets(new HashSet<>())
+                .build();
 
         Pet johnsCat = new Pet();
+        johnsCat.setName("Twinkie");
         johnsCat.setPetType(savedCatPetType);
         johnsCat.setBirthDate(LocalDate.now());
         johnsCat.setOwner(john);
+
         john.getPets().add(johnsCat);
 
         ownerService.save(dave);
