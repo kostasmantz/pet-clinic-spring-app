@@ -20,8 +20,10 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -105,4 +107,65 @@ class OwnerControllerTest {
         }
     }
 
+    @Test
+    void initCreationForm() {
+        try {
+            mockMvc.perform(get("/owners/new"))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("owners/ownerForm"))
+                    .andExpect(model().attributeExists("owner"));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        verifyNoInteractions(ownerService);
+    }
+
+    @Test
+    void processCreationForm() {
+        when(ownerService.save(any())).thenReturn(Owner.builder().id(OWNER_ID).build());
+
+        try {
+            mockMvc.perform(post("/owners/new"))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(redirectedUrl("/owners/1"))
+                    .andExpect(model().attributeExists("owner"));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        verify(ownerService, times(1)).save(any());
+    }
+
+    @Test
+    void initUpdateOwnerForm() {
+        when(ownerService.findById(anyLong())).thenReturn(Owner.builder().id(OWNER_ID).build());
+
+        try {
+            mockMvc.perform(get("/owners/1/edit"))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("owners/ownerForm"))
+                    .andExpect(model().attributeExists("owner"));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        verify(ownerService, times(1)).findById(anyLong());
+    }
+
+    @Test
+    void postUpdateOwnerForm() {
+        when(ownerService.save(any())).thenReturn(Owner.builder().id(OWNER_ID).build());
+
+        try {
+            mockMvc.perform(post("/owners/1/edit"))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(redirectedUrl("/owners/1"))
+                    .andExpect(model().attributeExists("owner"));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        verify(ownerService, times(1)).save(any());
+    }
 }
