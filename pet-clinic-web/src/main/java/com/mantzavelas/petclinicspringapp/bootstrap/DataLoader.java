@@ -47,7 +47,7 @@ public class DataLoader implements CommandLineRunner {
 
         Owner dave = Owner.builder()
                 .firstName("Dave")
-                .lastName("Johnson")
+                .lastName("Dongles")
                 .address("Lampraki 123")
                 .city("Thessaloniki")
                 .telephone("1234567890")

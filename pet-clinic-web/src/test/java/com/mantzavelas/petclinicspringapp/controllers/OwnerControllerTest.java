@@ -11,13 +11,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.isNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -48,39 +50,12 @@ class OwnerControllerTest {
     }
 
     @Test
-    void listOwners() {
-        when(ownerService.findAll()).thenReturn(owners);
-
-        try {
-            mockMvc.perform(get("/owners"))
-                    .andExpect(status().isOk())
-                    .andExpect(view().name("owners/index"))
-                    .andExpect(model().attribute("owners", hasSize(2)));
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
-    void listOwnersCallIndex() {
-        when(ownerService.findAll()).thenReturn(owners);
-
-        try {
-            mockMvc.perform(get("/owners/index"))
-                    .andExpect(status().isOk())
-                    .andExpect(view().name("owners/index"))
-                    .andExpect(model().attribute("owners", hasSize(2)));
-        } catch (Exception e) {
-            fail();
-        }
-    }
-
-    @Test
     void findOwners() {
         try {
             mockMvc.perform(get("/owners/find"))
                     .andExpect(status().isOk())
-                    .andExpect(view().name("notimplemented"));
+                    .andExpect(view().name("owners/findOwners"))
+                    .andExpect(model().attributeExists("owner"));
         } catch (Exception e) {
             fail();
         }
@@ -102,4 +77,32 @@ class OwnerControllerTest {
         }
 
     }
+
+    @Test
+    void processFindOwnerFormWithMultipleOwnersFound_ShouldReturnOwnerListView() {
+        when(ownerService.findAllByLastNameLike(anyString())).thenReturn(new ArrayList<>(owners));
+
+        try {
+            mockMvc.perform(get("/owners"))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("owners/ownersList"))
+                    .andExpect(model().attribute("selections", hasSize(2)));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    void processFindOwnerFormWithOneOwnerFound_ShouldReturnOwnerDetails() {
+        when(ownerService.findAllByLastNameLike(anyString())).thenReturn(Collections.singletonList(Owner.builder().id(OWNER_ID).build()));
+
+        try {
+            mockMvc.perform(get("/owners"))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(redirectedUrl("/owners/1"));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
 }
