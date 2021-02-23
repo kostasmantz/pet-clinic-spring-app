@@ -3,6 +3,7 @@ package com.mantzavelas.petclinicspringapp.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
@@ -32,5 +33,25 @@ public class Owner extends Person {
         this.city = city;
         this.telephone = telephone;
         this.pets = pets;
+    }
+
+    public void addPet(Pet pet) {
+        if (this.pets == null) {
+            this.pets = new HashSet<>();
+        }
+        this.pets.add(pet);
+        pet.setOwner(this);
+    }
+
+    public Pet getPetByName(String petName, boolean ignoreNew) {
+        Pet foundPet = pets.stream()
+            .filter(pet -> pet.getName().equals(petName))
+            .findFirst()
+            .orElse(null);
+
+        if (ignoreNew && foundPet != null && foundPet.isNew()) {
+            return null;
+        }
+        return foundPet;
     }
 }
